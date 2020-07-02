@@ -8,25 +8,11 @@
 <form action="_2168657_Getting_back_empty_viewmodel/AssortmentSave" method="post">
     @for (var i = 0; i < Model.Checkboxes!.Count; i++)
     {
-    @*<div class="[ form-group ]">
-        @Html.HiddenFor(model => model.Checkboxes[i].ProductId)
-        <label>@Html.CheckBoxFor(model => model.Checkboxes[i].IsSelected)</label> @Html.DisplayFor(model => model.Checkboxes[i].ProductName)
-        <label>Bar code : @Model.Checkboxes[i].Barcode</label>
-    </div>*@
-
-    <script>
-        function changeChecked(checkbox, hiddenId) {
-            document.getElementById(hiddenId).value = checkbox.checked;
-        }
-    </script>
-    <div class="[ form-group ]">
-        <input name="Checkboxes[@i].ProductId" type="hidden" value="@Model.Checkboxes[@i].ProductId" />
-        <label>
-            <input checked="@(Model.Checkboxes[@i].IsSelected? "checked" : "")" onchange="changeChecked(this, 'IsSelected_@i')" type="checkbox" />
-            <input name="Checkboxes[@i].IsSelected" type="hidden" id="IsSelected_@i"  value="@Model.Checkboxes[@i].IsSelected" /> @Model.Checkboxes[@i].ProductName
-        </label>
-        <label>Bar code : @Model.Checkboxes[@i].Barcode</label>
-    </div>
+        <div class="[ form-group ]">
+            @Html.HiddenFor(model => model.Checkboxes[i].ProductId)
+            <label>@Html.CheckBoxFor(model => model.Checkboxes[i].IsSelected)</label> @Html.DisplayFor(model => model.Checkboxes[i].ProductName)
+            <label>Bar code : @Model.Checkboxes[i].Barcode</label>
+        </div>
     }
     <div class="form-group">
         <input type="submit" value="Send email" class="btn btn-primary" />

@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css" media="screen" />
+
+<a id="fancy" href="#users">Show data</a>
+<div id="users" style="display:none">
+    <table>
+        <thead ><tr id="tblHead"></tr></thead>
+        <tbody id="tblBody">
+        </tbody>
+    </table>
+</div>
+<div id="selectedData" style="display:none">
+    <div>User id: <label id="userId"></label></div>
+    <div>User name: <label id="userName"></label></div>
+    <div>Email: <label id="email"></label></div>
+    <div>Phone: <label id="phone"></label></div>
+</div>
+<script>
+    var users = [];
+    function selectUser(i) {
+        var user = users[i];
+        for (var key in user) {
+            $('#'+key).html(user[key]);
+        }
+        $("#selectedData").show();
+    }
+    $.ajax({
+        url:  '@Url.Action("GetUsers", "_2168647_how_to_show_popup_with_list_returned_by_ajax_result_set_and_how_to_select_item_and_return_it_back_to_parent_html")',
+        data: {  },
+        type: "GET",
+        success: function (response) {
+            var tableBody = $("#tblBody");
+            $.map(response, function (item, i) {
+                users = response;
+                if (i == 0) {
+                    var thead = $("#tblHead");
+                    for (var key in item) {
+                        $('<th>').html(key).appendTo(thead);
+                    }
+                }
+                var row = $('<tr>');
+                for (var key in item) {
+                    $('<td>').html(item[key]).appendTo(row);
+                }
+                $('<td>').html('<a onclick="selectUser(' + i +');$.fancybox.close();">Select user</a>').appendTo(row);
+                row.appendTo(tableBody);
+            })
+            console.table(response);
+            $("#fancy").fancybox({
+                'titlePosition': 'inside',
+                'transitionIn': 'none',
+                'transitionOut': 'none'
+            });
+
+        },
+        error:function(x,y,z){debugger;}
+    });
+</script>
+
