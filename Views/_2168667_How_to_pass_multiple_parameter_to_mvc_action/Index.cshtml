@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+
+<script>
+    var Tuner = {};
+    Tuner.Tick1 = 'true';
+    Tuner.Tick2 = 'false';
+    Tuner.Sections = [];
+
+    var Section_LI = {};
+    Section_LI.Section = 'Consensus Model';
+    Section_LI.LI = 'Operating Earnings Before Income Taxes';
+    Tuner.Sections.push(Section_LI);
+
+    Section_LI = {};
+    Section_LI.Section = 'Consensus Model';
+    Section_LI.LI = 'Net Income attributable to common, GAAP';
+    Tuner.Sections.push(Section_LI);
+
+    $.ajax({
+        url:  '@Url.Action("Test1", "_2168667_How_to_pass_multiple_parameter_to_mvc_action")',
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(Tuner),
+        success: function (response) {
+            console.log(response);
+        },
+        error:function(x,y,z){debugger;}
+    });
+</script>
