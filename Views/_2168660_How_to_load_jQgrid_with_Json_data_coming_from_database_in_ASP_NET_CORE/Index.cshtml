@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Assortment";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>jqGrid</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/css/ui.jqgrid.min.css" integrity="sha512-xAIWSSbGucVRdutqUD0VLDowcMF/K8W87EbIoa9YUYB4bTyt/zeykyuu9Sjp0TPVdgrgGgBVCBowKv46wY5gDQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/plugins/css/ui.multiselect.min.css" integrity="sha512-UuhJihFIXhnP4QEzaNXfLmzY9W3xoeTDATm0buV4wb2qJKoikNn568f0zA5QmrX0sp6VZzqE6fffvsTYU34tGA==" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.5/jquery.jqgrid.min.js" integrity="sha512-xt9pysburfYgFvYEtlhPDo8qBEPsupsDvWB8+iwspD+oQTvAdDEpA1aIKcH6zuABU528YitH6jtP0cAe5GrwKA==" crossorigin="anonymous"></script>
+
+<table id="dataTable"></table>
+<div id="pager"></div>
+
+<script>
+    jQuery("#dataTable").jqGrid({
+   	url:'@Url.Action("GetUsers", "_2168660_How_to_load_jQgrid_with_Json_data_coming_from_database_in_ASP_NET_CORE")',
+	datatype: "json",
+    mtype: 'POST',
+   	colNames:['User id','User name', 'Email', 'Phone'],
+   	colModel:[
+   		{name:'userId',index:'userId', width:100},
+   		{name:'userName',index:'userName', width:200},
+   		{name:'email',index:'email', width:80, align:"right"},
+   		{name:'phone',index:'phone', width:80, align:"right"}		
+   	],
+   	rowList:[10,20,30],
+   	pager: '#pager',
+    width: '700',
+    rowNum:10,
+   	sortname: 'userId',
+    viewrecords: true,
+    sortorder: "desc",
+    jsonReader: {
+        repeatitems: false,
+        root: function(obj) { return obj.users; },
+        page: function(obj) { return obj.currentPage; },
+        total: function(obj) { return obj.totalPages; },
+        records: function(obj) { return obj.itemCount; },
+        id: "userId"
+    },
+    caption:"JSON Example"
+});
+jQuery("#list2").jqGrid('navGrid','#pager',{edit:false,add:false,del:false});
+
+</script>
