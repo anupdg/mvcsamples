@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<script src="https://use.fontawesome.com/da9a765b9d.js"></script>
+<h1>Serverside data paging with asp.net mvc core and jQuery</h1>
+<a getdata class="btn btn-primary mr-2" type="getUsingFormData" href="#">Get data using Form Data</a>
+<a getdata class="btn btn-primary" type="getDataUsingJson" href="#">Get data using Json</a>
+<table class="table mt-1">
+    <thead>
+        <tr id="columns">
+        </tr>
+    </thead>
+    <tbody id="tblBody">
+    </tbody>
+</table>
+<div class="container mt-3 d-none" id="pagingContainer">
+    <div class="row">
+        <a class="col-1" pageBtn="first">
+            <i class="fa fa-angle-double-left fa-2x" aria-hidden="true"></i>
+        </a><a class="col-1" pageBtn="previous">
+            <i class="fa fa-angle-left  fa-2x" aria-hidden="true"></i>
+        </a><div class="col-1"><span id="currentPage"></span> of <span id="totalPages"></span></div><a class="col-1" pageBtn="next">
+            <i class="fa fa-angle-right fa-2x" aria-hidden="true"></i>
+        </a><a pageBtn="last" class="col-1">
+            <i class="fa fa-angle-double-right fa-2x" aria-hidden="true"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    let library = {
+        type: '',
+        pageSize: 10,
+        fillHeader: function (data) {
+            var header = $("#columns");
+            header.empty();
+            $(Object.keys(data)).each(function (i, item) {
+                header.append($('<th>').html(item.replace(/([A-Z])/g, ' $1').trim()).attr('scope', 'col'))
+            })
+        },
+        fillRows: function (data) {
+            let tbody = $("#tblBody");
+            tbody.empty();
+            $(data).each(function (i, row) {
+                var tr = $('<tr>').attr('scope', 'row');
+                $(Object.keys(row)).each(function (i, item) {
+                    $('<td>').html(row[item]).appendTo(tr);
+                });
+                tr.appendTo(tbody);
+            });
+        },
+        fillData: function (data) {
+            if (data && data.users && data.users.length) {
+                this.fillHeader(data.users[0]);
+                this.fillRows(data.users);
+                this.currentPage = data.currentPage;
+                this.totalPages = data.totalPages;
+                $("#currentPage").html(this.currentPage);
+                $("#totalPages").html(this.totalPages);
+                $("#pagingContainer").removeClass('d-none').addClass('d-block');
+            }
+        },
+        getData: function (pagingOperation) {
+            if (pagingOperation) {
+                if (pagingOperation == 'first') {
+                    this.pageNumber = 1;
+                } else if (pagingOperation == 'previous') {
+                    if (this.pageNumber == 1) {
+                        return;
+                    }
+                    this.pageNumber -= 1;
+                } else if (pagingOperation == 'last') {
+                    this.pageNumber = this.totalPages;
+                } else if (pagingOperation == 'next') {
+                    if (this.pageNumber == this.totalPages) {
+                        return;
+                    }
+                    this.pageNumber += 1;
+                }
+            }
+            if (!this.pageNumber) {
+                this.pageNumber = 1;
+            }
+            this[this.type](this.pageNumber);
+        },
+        getDataUsingJson: function (pageNumber) {
+            let self = this;
+            var padingData = {
+                page: pageNumber,
+                pageSize: self.pageSize
+            }
+            $.ajax({
+                url: '@Url.Action("GetPagedDataModel", "ServerSidePaging")',
+                type: "POST",
+                dataType: 'json',
+                contentType: "application/json",
+                data: JSON.stringify(padingData),
+                success: function (data) {
+                    self.fillData(data);
+                },
+                error: function (x, y, z) { }
+            });
+        },
+        getUsingFormData: function (pageNumber) {
+            let self = this;
+            var data = new FormData();
+            data.append("page", pageNumber);
+            data.append("pageSize", self.pageSize);
+            $.ajax({
+                type: "POST",
+                enctype: 'multipart/form-data',
+                url: '@Url.Action("GetPagedData", "ServerSidePaging")',
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 800000,
+                success: function (data) {
+                    self.fillData(data);
+                },
+                error: function (e) {
+                    console.log("ERROR : ", e);
+                }
+            });
+        }
+    }
+    $("[getdata]").click(function (e) {
+        e.preventDefault();
+        library.type = $(this).attr('type');
+        library.getData(1);
+    })
+    $("[pageBtn]").click(function () {
+        var operation = $(this).attr('pageBtn');
+        library.getData(operation);
+    })
+</script>

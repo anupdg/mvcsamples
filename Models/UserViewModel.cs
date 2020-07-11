@@ -20,4 +20,9 @@ namespace MVCSamples.Models
         public int ItemCount { get; set; }
         public int TotalPages { get; set; }
     }
+
+    public class PagingModel {
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+    }
 }
